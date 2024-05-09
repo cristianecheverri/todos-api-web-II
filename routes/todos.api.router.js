@@ -1,8 +1,16 @@
 const router = require('express').Router()
+const client = require('../db/postgres')
 
 //index
-router.get('/', (req, res) => {
-    console.log('GET /api/v1/todos')
+router.get('/', async (req, res) => {
+    //console.log('GET /api/v1/todos')
+    //Obtener todos los "todos" de la BD
+    //http://localhost:3000/api/v1/todos
+    await client.connect()
+    const result = await client.query('SELECT * FROM todos')
+    console.log(result)
+    await client.end()
+    res.json(result.rows)
 })
 
 //store
