@@ -14,8 +14,14 @@ router.get('/', async (req, res) => {
 })
 
 //store
-router.post('/',(req,res)=> {
-    console.log('POST /api/v1/todos')
+router.post('/',async (req,res)=> {
+    await client.connect()
+    const result = await 
+    client.query('INSERT INTO todos (title, completed) VALUES ($1, $2)'
+    , [req.body.title, req.body.completed])
+    console.log(result)
+    await client.end() 
+    res.status(201).send('Todo created')
 })
 
 //show
