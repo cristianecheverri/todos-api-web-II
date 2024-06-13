@@ -1,0 +1,14 @@
+<html>
+    <body>
+        <h1>Todo List</h1>
+        <ul>
+            <% todos.forEach(function(todo) { %>
+                <li><%= todo %></li>
+            <% }); %>
+        </ul>
+        <form action="/add" method="post">
+            <input type="text" name="todo" />
+            <input type="submit" value="Add" />
+        </form>
+    </body>
+</html>

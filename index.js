@@ -23,6 +23,9 @@ app.use((req, res, next)=>{
 //Rutas
 routerTodos(app)
 
+app.set('views', './src/views')
+app.set('view engine', 'ejs')
+
 //Levantando el servidor para escuchar por el puerto 3000
 app.listen(PORT, () => {
     console.log('Listening on port: ' + PORT);
