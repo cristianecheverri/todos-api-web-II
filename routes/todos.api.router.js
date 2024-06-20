@@ -1,16 +1,14 @@
 const router = require("express").Router();
 const { connectClient } = require("../db/postgres");
+const todoModel = require("../src/models/todoModel");
 
 // Index
 router.get("/", async (req, res) => {
-    const client = await connectClient();
     try {
-        const result = await client.query("SELECT * FROM todos");
-        res.json(result.rows);
+        const todos = await todoModel.findAll();
+        res.json(todos);
     } catch (error) {
         res.status(500).send(error.message);
-    } finally {
-        await client.end();
     }
 });
 
