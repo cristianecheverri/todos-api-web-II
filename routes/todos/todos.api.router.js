@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const { connectClient } = require("../db/postgres");
-const todoModel = require("../src/models/todoModel");
+const { connectClient } = require("../../db/postgres");
+const todoModel = require("../../src/models/todoModel");
 
 // Index
 router.get("/", async (req, res) => {

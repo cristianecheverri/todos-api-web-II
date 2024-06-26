@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../db/sequelize');
 
-const Todo = sequelize.define(
-    'todos',
+const User = sequelize.define(
+    'users',
     {
         // Model attributes are defined here
         id: {
@@ -10,13 +10,17 @@ const Todo = sequelize.define(
             autoIncrement: true,
             primaryKey: true,
         },
-        title: {
+        name: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        completed: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false,
+        email: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         created_at: {
             type: DataTypes.DATE,
@@ -32,6 +36,6 @@ const Todo = sequelize.define(
         updatedAt: 'updated_at',
     }
 );
-// Todo.sync({ alter: true })
 
-module.exports = Todo;
+// User.sync({ alter: true })
+module.exports = User;

@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { leerArchivo, escribirArchivo } = require('../src/files')
+const { leerArchivo, escribirArchivo } = require('../../src/files')
 
 //index
 router.get('/', (req, res) => {

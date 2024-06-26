@@ -1,30 +1,108 @@
-<!-- views/index.ejs -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do List</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Estilos adicionales personalizados si los necesitas */
+        body {
+            padding: 20px;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>To-Do List</h1>
-    <form action="/todospanel" method="POST">
-        <label for="title">Título:</label>
-        <input type="text" id="title" name="title" required><br><br>
+    <div class="container">
+        <h1 class="mt-4">To-Do List</h1>
 
-        <label for="completed">Completado:</label>
-        <input type="checkbox" id="completed" name="completed"><br><br>
+        <!-- Formulario para agregar tarea -->
+        <form id="addTodoForm" action="/todospanel" method="POST" class="mt-4">
+            <div class="form-group">
+                <label for="title">Título:</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" id="completed" name="completed" class="form-check-input">
+                <label class="form-check-label" for="completed">Completado</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Tarea</button>
+        </form>
 
-        <button type="submit">Agregar Tarea</button>
-    </form>
-    <hr>
-    <h2>Tareas</h2>
-    <ul>
-        <% todos.forEach((todo) => { %>
-            <li>
-                <%= todo.title %> - <%= todo.completed ? "Completado" : "No Completado" %>
-            </li>
-        <% }) %>
-    </ul>
+        <hr>
+
+        <!-- Lista de tareas -->
+        <h2 class="mt-4">Tareas</h2>
+        <ul id="todoList" class="list-group">
+            <% todos.forEach((todo)=> { %>
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                    data-todoid="<%= todo.id %>">
+                    <%= todo.title %> - <%= todo.completed ? "Completado" : "No Completado" %>
+                            <div class="btn-group" role="group">
+                                <!-- Botón de Editar -->
+                                <button type="button" class="btn btn-info btn-sm"
+                                    onclick="editarTarea('<%= todo.id %>')">Editar</button>
+                                <!-- Botón de Eliminar -->
+                                <button type="button" class="btn btn-danger btn-sm"
+                                    onclick="eliminarTarea('<%= todo.id %>')">Eliminar</button>
+                            </div>
+                </li>
+                <% }) %>
+        </ul>
+    </div>
+
+    <!-- Bootstrap JS y dependencias opcionales -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Opcional: scripts personalizados -->
+
+    <script>
+        // Función para manejar la edición de una tarea
+        function editarTarea(todoId) {
+            // Obtener los datos de la tarea actual del servidor usando una solicitud GET
+            $.get(`/todospanel/${todoId}`, function (todo) {
+
+                // Llenar el formulario de agregar tarea con los datos de la tarea actual
+                $('#title').val(todo.title);
+                $('#completed').prop('checked', todo.completed);
+            });
+
+            // Cambiar el método del formulario para PUT o POST según la acción de edición
+            $('#addTodoForm').attr('action', `/todospanel/${todoId}?_method=PUT`);
+
+            // Cambiar el texto del botón submit
+            $('button[type="submit"]').text('Editar Tarea');
+        }
+
+        // Función para manejar la eliminación de una tarea
+        function eliminarTarea(todoId) {
+            // Confirmar con el usuario antes de eliminar
+            if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
+                // Realizar la solicitud DELETE al servidor
+                $.ajax({
+                    url: `/todospanel/${todoId}?_method=DELETE`,
+                    type: 'DELETE',
+                    success: function (result) {
+                        // Verificar si la respuesta fue exitosa
+                        if (result.success) {
+                            // Eliminar el elemento de la lista en la interfaz
+                            $(`li[data-todoid="${todoId}"]`).remove();
+                        } else {
+                            console.error('Error al eliminar la tarea:', result.message);
+                            // Manejar el error si es necesario
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error en la solicitud DELETE:', error);
+                        // Manejar el error si es necesario
+                    }
+                });
+            }
+        }
+    </script>
 </body>
+
 </html>
