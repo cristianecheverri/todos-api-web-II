@@ -4,12 +4,16 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 
 router.get("/signUp", (req, res) => {
-    res.render('auth/signUp');
+    if (req.user) {
+        res.redirect('/auth/profile');
+    } else {
+        res.render('auth/signUp', { user: req.user });
+    }
 });
 
 router.post("/signUp", async (req, res) => {
     try {
-        let { name, email, password, birth_date } = req.body;
+        let { name, email, password } = req.body;
 
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -17,8 +21,7 @@ router.post("/signUp", async (req, res) => {
         const user = await UserModel.create({
             name,
             email,
-            password: hashedPassword,
-            birth_date
+            password: hashedPassword
         });
 
         if (user) {
@@ -26,7 +29,7 @@ router.post("/signUp", async (req, res) => {
                 if (err) {
                     res.status(500).send(err.message);
                 } else {
-                    res.redirect('/auth/profile');
+                    res.render('auth/profile', { user });
                 }
             });
         } else {
@@ -38,11 +41,20 @@ router.post("/signUp", async (req, res) => {
 });
 
 router.get('/profile', (req, res) => {
-    res.json(req.user);
+    if (!req.user) {
+        res.redirect('/auth/signIn');
+    } else {
+        res.render('auth/profile', { user: req.user });
+    }
+
 });
 
 router.get('/signIn', (req, res) => {
-    res.render('auth/signIn');
+    if (req.user) {
+        res.redirect('/auth/profile');
+    } else {
+        res.render('auth/signIn', { user: req.user });
+    }
 });
 
 router.post('/signIn', (req, res) => {
@@ -51,6 +63,12 @@ router.post('/signIn', (req, res) => {
         failureRedirect: '/auth/signIn',
         keepSessionInfo: true
     })(req, res);
+});
+
+router.get('/signOut', (req, res) => {
+    req.logout(() => {
+        res.redirect('/auth/signIn');
+    });
 });
 
 

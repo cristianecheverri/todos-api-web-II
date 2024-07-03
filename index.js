@@ -5,6 +5,7 @@ const routerTodos = require('./routes')
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const expressLayouts = require('express-ejs-layouts');
 const passportConfig = require('./config/passport');
 
 const app = express()
@@ -33,6 +34,9 @@ app.use((req, res, next) => {
 
 app.set('views', './src/views')
 app.set('view engine', 'ejs')
+
+app.use(expressLayouts);
+app.set('layout', 'layouts/base');
 
 //Configuración de passport
 passportConfig(app);

@@ -1,0 +1,20 @@
+<div class="container mt-5">
+    <table class="table table-striped" border="1">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Tarea</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% todos.forEach(function(todo) { %>
+                <tr>
+                    <td><%= todo.id %></td>
+                    <td><%= todo.title %></td>
+                    <td><%= todo.completed ? 'Completado' : 'Pendiente' %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>

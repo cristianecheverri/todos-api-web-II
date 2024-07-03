@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary" style="margin: 0;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/todospanel/list">TODOS</a>
+        <% if (user) { %>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/todospanel">Todos admin</a>
+                </li>
+            </ul>
+        <% } %>
+        <div class="d-flex align-items-center">
+            <% if (!user) { %>
+                <a href="/auth/signIn" class="btn btn-outline-primary me-2">Login</a>
+                <a href="/auth/signUp" class="btn btn-primary">Registro</a>
+                <% } else { %>
+                    <div class="dropdown">
+                        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32"
+                                class="rounded-circle">
+                            <%= user.name %>
+                        </a>
+                        <ul class="dropdown-menu text-small dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/auth/profile">Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="/auth/signOut">Sign out</a></li>
+                        </ul>
+                    </div>
+                    <% } %>
+        </div>
+    </div>
+</nav>
