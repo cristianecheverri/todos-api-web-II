@@ -1,10 +1,10 @@
 const router = require("express").Router();
-const Todo = require("../../src/models/todoModel");
+const { index, store, show, update, deleteTodo, home } = require("../../src/controllers/todos");
 const excludedRoutes = ['/home'];
 
 router.use((req, res, next) => {
-    const pathWithoutTrailingSlash = req.path.endsWith('/') 
-        ? req.path.slice(0, -1) 
+    const pathWithoutTrailingSlash = req.path.endsWith('/')
+        ? req.path.slice(0, -1)
         : req.path;
     if (excludedRoutes.includes(pathWithoutTrailingSlash)) {
         next();
@@ -19,74 +19,21 @@ router.use((req, res, next) => {
     }
 });
 
-router.get("/home", async (req, res) => {
-    try {
-        const result = await Todo.findAll({
-            order: [
-                ['id', 'ASC']
-            ]
-        });
-        res.render('home', { user: req.user, todos: result});
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-    res.send('HOLA');
-});
+router.get("/home", home);
 
 // Index
-router.get("/", async (req, res) => {
-    try {
-        const result = await Todo.findAll({
-            order: [
-                ['id', 'ASC']
-            ]
-        });
-        res.render('todos/index', { todos: result, user: req.user });
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
+router.get("/", index);
 
 // Store
-router.post("/", async (req, res) => {
-    try {
-        const {title, completed} = req.body;
-        await Todo.create({ title, completed: completed == 'on' ? true : false });
-        res.redirect('/todospanel');
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
+router.post("/", store);
 
 // Show
-router.get("/:id", async (req, res) => {
-    try {
-        const result = await Todo.findByPk(req.params.id);
-        res.json(result);
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
+router.get("/:id", show);
 
-// Update
-router.post("/:id", async (req, res) => {
-    try {
-        const {title, completed} = req.body;
-        await Todo.update({ title, completed: completed == 'on' ? true : false }, { where: { id: req.params.id } });
-        res.redirect('/todospanel');
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-});
+//update
+router.post('/:id', update)
 
 // Delete
-router.delete("/:id", async (req, res) => {
-    try {
-        await Todo.destroy({ where: { id: req.params.id } });
-        res.json({ message: 'Todo deleted' });
-    } catch (error) {
-        res.status(500).json(error.message);
-    }
-});
+router.delete("/:id", deleteTodo);
 
 module.exports = router;
